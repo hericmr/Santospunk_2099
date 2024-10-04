@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://bs8a7aih50n8h"]
+
+[ext_resource type="Texture2D" uid="uid://b3sbyxvbqvf2g" path="res://c6.png" id="1_ux1fx"]
+[ext_resource type="Texture2D" uid="uid://cxi4nx283evum" path="res://heric.png" id="2_gfat3"]
+[ext_resource type="Script" path="res://sprite_2d_2.gd" id="3_dy3xj"]
+[ext_resource type="AudioStream" uid="uid://jfvduwbm0t8k" path="res://nome.wav" id="4_3br8c"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D"]
+position = Vector2(575.5, 320.5)
+scale = Vector2(1.20313, 0.904167)
+texture = ExtResource("1_ux1fx")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Node2D"]
+position = Vector2(271.5, 512)
+scale = Vector2(0.481707, 0.355072)
+texture = ExtResource("2_gfat3")
+script = ExtResource("3_dy3xj")
+
+[node name="Dialogo" type="Label" parent="Node2D"]
+offset_left = 328.0
+offset_top = 356.0
+offset_right = 623.0
+offset_bottom = 420.0
+theme_type_variation = &"HeaderLarge"
+
+[node name="NomeInput" type="LineEdit" parent="Node2D"]
+visible = false
+offset_left = 335.0
+offset_top = 451.0
+offset_right = 602.0
+offset_bottom = 500.0
+
+[node name="SomPlayer" type="AudioStreamPlayer2D" parent="Node2D"]
+stream = ExtResource("4_3br8c")
