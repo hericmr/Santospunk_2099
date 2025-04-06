@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Santospunk_2099/static/css/main.b648dd9c.css",
+    "main.js": "/Santospunk_2099/static/js/main.0318a514.js",
+    "static/js/453.14f72cf6.chunk.js": "/Santospunk_2099/static/js/453.14f72cf6.chunk.js",
+    "index.html": "/Santospunk_2099/index.html",
+    "main.b648dd9c.css.map": "/Santospunk_2099/static/css/main.b648dd9c.css.map",
+    "main.0318a514.js.map": "/Santospunk_2099/static/js/main.0318a514.js.map",
+    "453.14f72cf6.chunk.js.map": "/Santospunk_2099/static/js/453.14f72cf6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b648dd9c.css",
+    "static/js/main.0318a514.js"
+  ]
+}
