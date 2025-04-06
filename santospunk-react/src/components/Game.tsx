@@ -412,12 +412,12 @@ class VideoScene extends Phaser.Scene {
         
         if (videoRatio > screenRatio) {
             // Se o vídeo é mais largo que a tela, ajusta pela largura
-            const width = screenWidth * 0.9; // 90% da largura da tela
+            const width = screenWidth * 0.8; // 80% da largura da tela
             const height = width / videoRatio;
             this.video.setDisplaySize(width, height);
         } else {
             // Se o vídeo é mais alto que a tela, ajusta pela altura
-            const height = screenHeight * 0.9; // 90% da altura da tela
+            const height = screenHeight * 0.7; // 70% da altura da tela
             const width = height * videoRatio;
             this.video.setDisplaySize(width, height);
         }
@@ -491,11 +491,11 @@ class VideoScene extends Phaser.Scene {
             const newScreenRatio = width / height;
             
             if (newVideoRatio > newScreenRatio) {
-                const newWidth = width * 0.9;
+                const newWidth = width * 0.8;
                 const newHeight = newWidth / newVideoRatio;
                 this.video.setDisplaySize(newWidth, newHeight);
             } else {
-                const newHeight = height * 0.9;
+                const newHeight = height * 0.7;
                 const newWidth = newHeight * newVideoRatio;
                 this.video.setDisplaySize(newWidth, newHeight);
             }
