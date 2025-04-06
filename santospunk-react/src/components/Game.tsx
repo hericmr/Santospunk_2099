@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
+import RPGGame from './RPGScene';
+import BattleScene from './BattleScene';
 
 class MenuScene extends Phaser.Scene {
     private background!: Phaser.GameObjects.Image;
@@ -15,10 +17,12 @@ class MenuScene extends Phaser.Scene {
     private character!: Phaser.GameObjects.Image;
     private xumbro!: Phaser.GameObjects.Image;
     private glitchTimer: Phaser.Time.TimerEvent | null = null;
+    private continuousGlitchTimer: Phaser.Time.TimerEvent | null = null;
     private yearCounter!: Phaser.GameObjects.Text;
     private yearValue: number = 0;
     private buttons: Phaser.GameObjects.Image[] = [];
     private buttonTexts: Phaser.GameObjects.Text[] = [];
+    private startContinuousGlitch!: () => void;
 
     constructor() {
         super('MenuScene');
@@ -72,6 +76,13 @@ class MenuScene extends Phaser.Scene {
 
     create() {
         console.log('Creating scene...');
+        
+        // Garantir que a câmera esteja disponível
+        if (!this.cameras || !this.cameras.main) {
+            console.error('Camera not available');
+            return;
+        }
+        
         const screenWidth = this.cameras.main.width;
         const screenHeight = this.cameras.main.height;
         console.log('Screen dimensions:', { width: screenWidth, height: screenHeight });
@@ -126,13 +137,18 @@ class MenuScene extends Phaser.Scene {
         // Create year counter with cyberpunk style
         this.yearCounter = this.add.text(screenWidth / 2.04, screenHeight * 0.30, '0000', {
             fontSize: '64px',
-            fontFamily: 'monospace',
-            color: '#ffcc00'
+            fontFamily: 'Digital-7, "Courier New", monospace',
+            color: '#cc4400',
+            padding: { x: 20, y: 10 },
+            align: 'center',
+            fixedWidth: 200,
+            fixedHeight: 80,
+            letterSpacing: 2
         });
         this.yearCounter.setOrigin(0.5);
         this.yearCounter.setAlpha(0);
         this.yearCounter.setDepth(9);
-
+        
         // Create glitch effect for title
         this.titleGlitch = this.add.renderTexture(0, 0, screenWidth, screenHeight);
         this.titleGlitch.setVisible(false);
@@ -171,34 +187,107 @@ class MenuScene extends Phaser.Scene {
             }
             this.title.setAlpha(1);
             
-            // Start glitch effect
-            this.glitchTimer = this.time.addEvent({
+            // Efeito de malcontato no título - fase inicial intensa
+            let glitchCount = 0;
+            const glitchInterval = this.time.addEvent({
                 delay: 100,
-                callback: this.applyGlitchEffect,
-                callbackScope: this,
-                loop: true
-            });
-
-            // Start year counter animation after title appears
-            this.time.delayedCall(500, () => {
-                if (this.glitchTimer) {
-                    this.glitchTimer.destroy();
-                    this.glitchTimer = null;
-                }
-                if (this.titleGlitch) {
-                    this.titleGlitch.clear();
-                    this.titleGlitch.destroy();
-                    this.titleGlitch = null;
-                }
-                this.yearCounter.setAlpha(1);
-                this.animateYearCounter();
-            });
-
-            // Create and show button after counter finishes
-            this.time.delayedCall(2500, () => {
-                this.createMenuButtons();
+                callback: () => {
+                    // Efeito de malcontato - deslocamento aleatório
+                    const offsetX = 5;
+                    const offsetY = 2;
+                    const rotation = Math.random() * 0.1 - 0.05;
+                    
+                    this.title.setPosition(
+                        screenWidth / 2 + offsetX, 
+                        screenHeight * 0.10 + offsetY
+                    );
+                    this.title.setRotation(rotation);
+                    
+                    // Efeito de distorção de cores
+                    if (Math.random() > 0.7) {
+                        this.title.setTint(0xff0000);
+                    } else if (Math.random() > 0.5) {
+                        this.title.setTint(0x00ff00);
+                    } else {
+                        this.title.clearTint();
+                    }
+                    
+                    // Efeito de flicker
+                    if (Math.random() > 0.8) {
+                        this.title.setAlpha(1);
+                    } else {
+                        this.title.setAlpha(1);
+                    }
+                    
+                    glitchCount++;
+                    
+                    // Após várias variações, estabiliza parcialmente o título
+                    if (glitchCount >= 15) {
+                        glitchInterval.destroy();
+                        
+                        // Configurar o título para um estado mais estável
+                        this.title.setScale(2.5);
+                        
+                        // Iniciar efeito de malcontato contínuo (mais estável)
+                        this.startContinuousGlitch();
+                        
+                        // Start year counter animation after title appears
+                        this.time.delayedCall(500, () => {
+                            this.yearCounter.setAlpha(1);
+                            this.animateYearCounter();
+                        });
+                        
+                        // Create and show button after counter finishes
+                        this.time.delayedCall(2500, () => {
+                            this.createMenuButtons();
+                        });
+                    }
+                },
+                repeat: 14
             });
         });
+        
+        // Método para iniciar o efeito de malcontato contínuo (mais estável)
+        this.startContinuousGlitch = () => {
+            // Efeito de malcontato contínuo (mais estável)
+            this.continuousGlitchTimer = this.time.addEvent({
+                delay: 300, // Intervalo maior para ser mais estável
+                callback: () => {
+                    // Deslocamento menor para ser mais estável
+                    const offsetX = 5;
+                    const offsetY = 2;
+                    const rotation = Math.random() * 0.03 - 0.015;
+                    
+                    this.title.setPosition(
+                        screenWidth / 2 + offsetX, 
+                        screenHeight * 0.10 + offsetY
+                    );
+                    this.title.setRotation(rotation);
+                    
+                    // Efeito de distorção de cores (menos frequente)
+                    if (Math.random() > 0.9) {
+                        this.title.setTint(0xff0000);
+                        this.time.delayedCall(50, () => {
+                            this.title.clearTint();
+                        });
+                    } else if (Math.random() > 0.95) {
+                        this.title.setTint(0x00ff00);
+                        this.time.delayedCall(50, () => {
+                            this.title.clearTint();
+                        });
+                    }
+                    
+                    // Efeito de flicker (menos frequente)
+                    if (Math.random() > 0.95) {
+                        this.title.setAlpha(1);
+                        this.time.delayedCall(50, () => {
+                            this.title.setAlpha(1);
+                        });
+                    }
+                },
+                loop: true
+            });
+        };
     }
 
     applyGlitchEffect() {
@@ -325,18 +414,19 @@ class MenuScene extends Phaser.Scene {
 
             // Create main text with hacker style
             const mainText = this.add.text(0, -35, config.text, {
-                fontSize: '48px',
-                fontFamily: 'Press Start 2P',
+                fontSize: '32px',
+                fontFamily: 'monospace',
                 color: '#ffcc00',
-                letterSpacing: 2
+                padding: { x: 20, y: 10 },
+                backgroundColor: '#00000066'
             });
             mainText.setOrigin(0.5);
             buttonContainer.add(mainText);
 
             // Create subtext with hacker style
             const subText = this.add.text(0, 25, config.subtext, {
-                fontSize: '58px',
-                fontFamily: 'Press Start 2P',
+                fontSize: '24px',
+                fontFamily: 'monospace',
                 color: '#ffdd00',
                 letterSpacing: 1
             });
@@ -404,12 +494,33 @@ class MenuScene extends Phaser.Scene {
 
             // Animate buttons appearance with staggered delay based on position
             const delayMultiplier = (index % 2) * 2 + Math.floor(index / 2); // Cria um efeito de aparecimento alternado
-            this.tweens.add({
-                targets: buttonContainer,
-                alpha: 0.95,
-                duration: 1000,
-                ease: 'Power2',
-                delay: 2500 + (delayMultiplier * 200)
+            
+            // Efeito de TV ligando para os botões
+            buttonContainer.setAlpha(0);
+            
+            // Efeito de flicker
+            this.time.delayedCall(2500 + (delayMultiplier * 200), () => {
+                // Flash inicial
+                this.cameras.main.flash(100, 255, 255, 255);
+                
+                // Aparecimento abrupto com flicker
+                buttonContainer.setAlpha(1);
+                
+                // Efeito de flicker após aparecer
+                let flickerCount = 0;
+                const flickerInterval = this.time.addEvent({
+                    delay: 50,
+                    callback: () => {
+                        buttonContainer.setAlpha(flickerCount % 2 === 0 ? 1 : 0.3);
+                        flickerCount++;
+                        
+                        if (flickerCount >= 6) {
+                            flickerInterval.destroy();
+                            buttonContainer.setAlpha(0.95);
+                        }
+                    },
+                    repeat: 5
+                });
             });
         });
     }
@@ -455,7 +566,7 @@ class MenuScene extends Phaser.Scene {
             this.yearCounter.setText(this.yearValue.toString().padStart(4, '0'));
 
             if (Math.random() > 0.7) {
-                this.yearCounter.setTint(0xff00ff);
+                this.yearCounter.setTint(0xcc5500);
                 this.time.delayedCall(50, () => {
                     this.yearCounter.clearTint();
                 });
@@ -464,8 +575,7 @@ class MenuScene extends Phaser.Scene {
             if (currentStep < steps) {
                 this.time.delayedCall(stepDuration, updateCounter);
             } else {
-                this.cameras.main.shake(100, 0.005);
-                this.yearCounter.setTint(0xffcc00);
+                this.yearCounter.setTint(0xcc4400);
                 this.time.delayedCall(100, () => {
                     this.yearCounter.clearTint();
                 });
@@ -651,7 +761,7 @@ class VideoScene extends Phaser.Scene {
                 ease: 'Power2',
                 onComplete: () => {
                     this.video.stop();
-                    this.scene.start('MenuScene');
+                    this.scene.start('RPGScene');
                 }
             });
         });
@@ -660,7 +770,7 @@ class VideoScene extends Phaser.Scene {
         this.video.on('complete', () => {
             this.cameras.main.fade(1000, 0, 0, 0);
             this.time.delayedCall(1000, () => {
-                this.scene.start('MenuScene');
+                this.scene.start('RPGScene');
             });
         });
 
@@ -1074,13 +1184,12 @@ const Game: React.FC = () => {
             width: window.innerWidth,
             height: window.innerHeight,
             parent: gameRef.current,
-            scene: [MenuScene, VideoScene, SettingsScene],
+            scene: [MenuScene, VideoScene, SettingsScene, RPGGame, BattleScene],
             scale: {
                 mode: Phaser.Scale.RESIZE,
-                autoCenter: Phaser.Scale.CENTER_BOTH,
-                parent: gameRef.current,
                 width: '100%',
                 height: '100%',
+                autoCenter: Phaser.Scale.CENTER_BOTH,
                 min: {
                     width: 800,
                     height: 400
@@ -1101,6 +1210,10 @@ const Game: React.FC = () => {
                 touch: {
                     capture: true
                 }
+            },
+            render: {
+                pixelArt: true,
+                antialias: false
             }
         };
 
