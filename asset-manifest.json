@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Santospunk_2099/static/css/main.5289708e.css",
-    "main.js": "/Santospunk_2099/static/js/main.01206d8a.js",
+    "main.js": "/Santospunk_2099/static/js/main.cdaaa7ea.js",
     "static/js/453.14f72cf6.chunk.js": "/Santospunk_2099/static/js/453.14f72cf6.chunk.js",
     "index.html": "/Santospunk_2099/index.html",
     "main.5289708e.css.map": "/Santospunk_2099/static/css/main.5289708e.css.map",
-    "main.01206d8a.js.map": "/Santospunk_2099/static/js/main.01206d8a.js.map",
+    "main.cdaaa7ea.js.map": "/Santospunk_2099/static/js/main.cdaaa7ea.js.map",
     "453.14f72cf6.chunk.js.map": "/Santospunk_2099/static/js/453.14f72cf6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5289708e.css",
-    "static/js/main.01206d8a.js"
+    "static/js/main.cdaaa7ea.js"
   ]
 }
